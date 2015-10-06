@@ -1,0 +1,69 @@
+#!/bin/bash
+
+# script must be called with one argument
+if [[ $# -ne 1 ]]; then
+  echo "No arguments found!"
+  exit 1
+fi
+
+word=$1
+
+# cache config
+cache_folder="/tmp/bashsaurus"
+cache_file="$cache_folder/$word"
+
+# api config
+api_tpl="http://words.bighugelabs.com/api/:version/:key/:word/"
+api_ver="2"
+
+# Executes an API request if the cache file does not exist then
+# cycles the words in the cache file after it has been created.
+function main {
+  mkdir -p $cache_folder
+
+  # if cache doesn't exist, need to make the request
+  if [[ ! -f $cache_file ]] ; then
+    request
+  fi
+
+  cycle
+}
+
+# Takes the current word from the top of the cache and moves it
+# to the bottom then prints it to the user.
+function cycle {
+  word=$(cat $cache_file | head -n 1)
+  rest=$(cat $cache_file | tail -n +2)
+
+  echo -e "$rest\n$word" > $cache_file
+  echo $word
+
+  exit 0
+}
+
+# Makes a request to the thesaurus API and writes the response
+# into the cache file for that word.
+function request {
+  # can't make requests without an API key.
+  if [[ -z $BASHSAURUS_API_KEY ]] ; then
+    echo "Could not find \$BASHSAURUS_API_KEY!"
+    exit 1
+  fi
+
+  api_url=${api_tpl/:version/$api_ver}
+  api_url=${api_url/:key/$BASHSAURUS_API_KEY}
+  api_url=${api_url/:word/$word}
+
+  response=$(curl -s $api_url)
+
+  words=$(echo $response |\
+          sed 's/ /\n/g' |\
+          sed 's/.*|.*|\(.*\)/\1/g' |\
+          uniq)
+
+  echo $words | sed 's/\s/\n/g' > "$cache_folder/$word"
+}
+
+# execute last
+main
+
