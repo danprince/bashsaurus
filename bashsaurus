@@ -6,7 +6,9 @@ if [[ $# -ne 1 ]]; then
   exit 1
 fi
 
-word=$1
+input=$1
+# convert to lowercase
+word=$(echo $input | tr '[:upper:]' '[:lower:]')
 
 # cache config
 cache_folder="/tmp/bashsaurus"
@@ -32,6 +34,7 @@ function cycle {
   rest=$(cat $cache_file | tail -n +2)
 
   echo -e "$rest\n$word" > $cache_file
+
   echo $word
 
   exit 0
@@ -43,7 +46,9 @@ function request {
   scrape_url="http://www.thesaurus.com/browse/$word"
   token_start="synonyms-0"
   token_end="filter-0"
-  html=$(curl -s $scrape_url)
+
+  # use the location flag to respect 301 (page moved)
+  html=$(curl -s $scrape_url --location)
 
   echo "$html" |\
     sed -n "/$token_start/,/$token_end/p" |\
