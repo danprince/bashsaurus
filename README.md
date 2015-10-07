@@ -1,5 +1,5 @@
 # bashsaurus
-Simple API driven Thesaurus in Bash.
+Simple cycling Thesaurus in Bash.
 
 ```bash
 $ bashsaurus simple
@@ -10,9 +10,9 @@ $ bashsaurus simple
 unproblematic
 ```
 
-Rather than presenting you with a full list of words, the script gives you a new synonym for a given word each time you run it. This continues until all the available synonyms have been depleted, at which point the list cycles again.
+Rather than presenting you with a full list of words, the script gives you a new synonym for a given word each time you run it. This continues until all the available synonyms have been depleted, at which point the list cycles again. It is designed to be used with a text editor plugin, which would allow you to cycle over synonyms for the word the cursor is currently above.
 
-The script is designed to be used with a text editor plugin, which would allow you to cycle over synonyms for the word the cursor is currently above.
+The synonyms are scraped from [http://www.thesaurus.com/](http://www.thesaurus.com/).
 
 ## Install
 ```bash
@@ -25,15 +25,12 @@ sudo ln -s $PWD/bashsaurus /usr/bin/bashsaurus
 ```
 
 ## Usage
-1. Get a free API key from [Big Huge Thesaurus][1].
-2. Store the API key against a `BASHSAURUS_API_KEY` environment variable.
-
 ```bash
-export BASHSAURUS_API_KEY=your_api_key_here
-
-# test it works
-echo $BASHSAURUS_API_KEY
-your_api_key_here
+$ bashsaurus fun
+enjoyable
+$ bashsaurus fun
+pleasant
+$ bashsaurus fun
+entertaining
 ```
 
-[1]: https://words.bighugelabs.com/api.php
