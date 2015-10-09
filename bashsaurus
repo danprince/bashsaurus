@@ -53,7 +53,8 @@ function request {
   echo "$html" |\
     sed -n "/$token_start/,/$token_end/p" |\
     grep 'class="text"' |\
-    sed 's/<.*>\(.*\)<.*>/\1/g' > $cache_file
+    sed 's/<.*>\(.*\)<.*>/\1/g' \
+    > $cache_file
 }
 
 # execute last
